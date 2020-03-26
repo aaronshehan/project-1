@@ -27,15 +27,21 @@ std::ostream& operator<<(std::ostream& os, const block* blk)
 
 // need to consider empty list
 block* unlink(int lst) {
+    block* rv;
     if (lst == 0) {
-        
+        rv = freelist.back();
+        freelist.pop_back();
     } 
     else if (lst == 1) {
-
+        rv = list1.back();
+        list1.pop_back();
     } 
     else {
-
+        rv = list2.back();
+       list2.pop_back();
     }
+
+    return rv;
 }
 
 void link(block* toLink, int lst) {
