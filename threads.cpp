@@ -67,11 +67,12 @@ void produce_information_in_block(block* n) {
 }
 
 void consume_information_in_block(block* n) {
-
+    n->unit = 0;
 }
 
 void use_block_x_to_produce_info_in_y(block* x, block* y) {
-
+    y->unit = x->unit;
+    x->unit = 0;
 }
 
 
@@ -83,7 +84,6 @@ void* thread1(void* ptr) {
     //     link(b, 1); 
     // }
 
-    cout << "thread 1" << endl;
 }
 
 void* thread2(void* ptr) {
@@ -95,7 +95,7 @@ void* thread2(void* ptr) {
     //     link(x, 0);
     //     link(y, 2);
     // }
-     cout << "thread 2" << endl;
+
 }
 
 void* thread3(void* ptr) {
@@ -105,7 +105,7 @@ void* thread3(void* ptr) {
     //     consume_information_in_block(c);
     //     link(c, 0);
     // }
-     cout << "thread 3" << endl;
+  
 }
 
 int main(int argc, char** argv) {
