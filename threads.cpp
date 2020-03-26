@@ -39,15 +39,21 @@ block* unlink(int lst) {
 }
 
 void link(block* toLink, int lst) {
+    block* rv;
     if (lst == 0) {
-        freelist.push_back(toLink);
+        rv = freelist.back();
+        freelist.pop_back();
     } 
     else if (lst == 1) {
-        list1.push_back(toLink);
+        rv = list1.back();
+        list1.pop_back();
     } 
     else {
-        list2.push_back(toLink);
+        rv = list2.back();
+       list2.pop_back();
     }
+
+    return rv;
 }
 
 void produce_information_in_block(block* n) {
