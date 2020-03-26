@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
     int N = atoi(argv[1]);
 
     for (int i = 0; i < N; i++) {
-        freelist.push_back(new block(i));
+        freelist.push_back(new block(0));
     }
 
     pthread_t threads[3];
