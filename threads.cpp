@@ -18,8 +18,7 @@ list<block*> freelist;
 list<block*> list1;
 list<block*> list2;
 
-std::ostream& operator<<(std::ostream& os, const block* blk)
-{
+std::ostream& operator<<(std::ostream& os, const block* blk) {
     os << blk->unit << endl;
     return os;
 }
