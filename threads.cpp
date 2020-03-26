@@ -24,8 +24,12 @@ std::ostream& operator<<(std::ostream& os, const block* blk)
     return os;
 }
 
+int randomNum() {
+    static thread_local std::mt19937 gen;
+    std::uniform_int_distribution<int> distribution(1, 1000);
+    return distribution(gen);
+}
 
-// need to consider empty list
 block* unlink(int lst) {
     block* rv;
     if (lst == 0) {
@@ -63,7 +67,7 @@ void link(block* toLink, int lst) {
 }
 
 void produce_information_in_block(block* n) {
-
+    n->unit = randomNum();
 }
 
 void consume_information_in_block(block* n) {
