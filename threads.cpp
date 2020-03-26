@@ -59,7 +59,7 @@ void link(block* toLink, int lst) {
         list1.pop_back();
     } 
     else {
-        rv = list2.back();
+       rv = list2.back();
        list2.pop_back();
     }
 
