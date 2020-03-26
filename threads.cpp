@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <pthread.h>
+#include <semaphore.h>
 
 using std::cout;
 using std::endl;
@@ -17,6 +18,8 @@ struct block {
 list<block*> freelist;
 list<block*> list1;
 list<block*> list2;
+
+sem_t binary_freelist, counting_freelist, binary_list1, counting_list1, binary_list2, couting_list2;
 
 std::ostream& operator<<(std::ostream& os, const block* blk) {
     os << blk->unit << endl;
