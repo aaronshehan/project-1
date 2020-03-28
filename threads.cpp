@@ -2,6 +2,7 @@
 #include <list>
 #include <pthread.h>
 #include <semaphore.h>
+#include <random>
 
 using std::cout;
 using std::endl;
@@ -51,21 +52,15 @@ block* unlink(int lst) {
 }
 
 void link(block* toLink, int lst) {
-    block* rv;
     if (lst == 0) {
-        rv = freelist.back();
-        freelist.pop_back();
+        freelist.push_back(toLink);
     } 
     else if (lst == 1) {
-        rv = list1.back();
-        list1.pop_back();
+        list1.push_back(toLink);
     } 
     else {
-       rv = list2.back();
-       list2.pop_back();
+       list2.push_back(toLink);
     }
-
-    return rv;
 }
 
 void produce_information_in_block(block* n) {
@@ -83,34 +78,34 @@ void use_block_x_to_produce_info_in_y(block* x, block* y) {
 
 
 void* thread1(void* ptr) {
-    // block* b;
-    // while (1) {
-    //     b = unlink(0);
-    //     produce_information_in_block(b);
-    //     link(b, 1); 
-    // }
+    block* b;
+    while (1) {
+        b = unlink(0);
+        produce_information_in_block(b);
+        link(b, 1); 
+     }
 
 }
 
 void* thread2(void* ptr) {
-    // block *x,*y;
-    // while (1) {
-    //     x = unlink(1);
-    //     y = unlink(0);
-    //     use_block_x_to_produce_info_in_y(x, y);
-    //     link(x, 0);
-    //     link(y, 2);
-    // }
+    block *x,*y;
+    while (1) {
+     x = unlink(1);
+         y = unlink(0);
+         use_block_x_to_produce_info_in_y(x, y);
+         link(x, 0);
+         link(y, 2);
+     }
 
 }
 
 void* thread3(void* ptr) {
-    // block* c;
-    // while(1) {
-    //     c = unlink(2);
-    //     consume_information_in_block(c);
-    //     link(c, 0);
-    // }
+     block* c;
+     while(1) {
+         c = unlink(2);
+         consume_information_in_block(c);
+         link(c, 0);
+     }
   
 }
 
