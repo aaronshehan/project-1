@@ -36,16 +36,19 @@ int randomNum() {
 block* unlink(int lst) {
     block* rv;
     if (lst == 0) {
+        cout << "Unlinking from Freelist" << endl;
         rv = freelist.back();
         freelist.pop_back();
     } 
     else if (lst == 1) {
+        cout << "Unlinking from List-1 " << endl;
         rv = list1.back();
         list1.pop_back();
     } 
     else {
+        cout << "Unlinking from List-2" << endl;
         rv = list2.back();
-       list2.pop_back();
+        list2.pop_back();
     }
 
     return rv;
@@ -53,13 +56,16 @@ block* unlink(int lst) {
 
 void link(block* toLink, int lst) {
     if (lst == 0) {
+        cout << "Linking to Freelist" << endl;
         freelist.push_back(toLink);
     } 
     else if (lst == 1) {
+        cout << "Linking to List-1" << endl;
         list1.push_back(toLink);
     } 
     else {
-       list2.push_back(toLink);
+        cout << "Linking to List-2" << endl;
+        list2.push_back(toLink);
     }
 }
 
@@ -80,9 +86,21 @@ void use_block_x_to_produce_info_in_y(block* x, block* y) {
 void* thread1(void* ptr) {
     block* b;
     while (1) {
+        sem_wait(&counting_freelist);
+        sem_wait(&binary_freelist);
+
         b = unlink(0);
+
+        sem_post(&binary_freelist);
+
         produce_information_in_block(b);
-        link(b, 1); 
+
+        sem_wait(&binary_list1);
+
+        link(b, 1);
+
+        sem_post(&binary_list1);
+        sem_post(&counting_list1);
      }
 
 }
@@ -90,11 +108,33 @@ void* thread1(void* ptr) {
 void* thread2(void* ptr) {
     block *x,*y;
     while (1) {
-     x = unlink(1);
-         y = unlink(0);
-         use_block_x_to_produce_info_in_y(x, y);
-         link(x, 0);
-         link(y, 2);
+        sem_wait(&counting_list1);
+        sem_wait(&binary_list1);
+
+        x = unlink(1);
+
+        sem_post(&binary_list1);
+        sem_wait(&counting_freelist);
+        sem_wait(&binary_freelist);
+
+        y = unlink(0);
+
+        sem_post(&binary_freelist);
+
+        use_block_x_to_produce_info_in_y(x, y);
+
+        sem_wait(&binary_freelist);
+
+        link(x, 0);
+
+        sem_post(&binary_freelist);
+        sem_post(&counting_freelist);
+        sem_wait(&binary_list2);
+
+        link(y, 2);
+
+        sem_post(&binary_list2);
+        sem_post(&counting_list2);
      }
 
 }
@@ -102,9 +142,21 @@ void* thread2(void* ptr) {
 void* thread3(void* ptr) {
      block* c;
      while(1) {
+         sem_wait(&counting_list2);
+         sem_wait(&binary_list2);
+
          c = unlink(2);
+
+         sem_post(&binary_list2);
+
          consume_information_in_block(c);
+
+         sem_wait(&binary_freelist);
+
          link(c, 0);
+
+         sem_post(&binary_freelist);
+         sem_post(&counting_freelist);
      }
   
 }
