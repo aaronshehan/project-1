@@ -20,7 +20,7 @@ list<block*> freelist;
 list<block*> list1;
 list<block*> list2;
 
-sem_t binary_freelist, counting_freelist, binary_list1, counting_list1, binary_list2, counting_list2;
+sem_t binary_freelist, counting_freelist, counting_freelist2, binary_list1, counting_list1, binary_list2, counting_list2;
 
 std::ostream& operator<<(std::ostream& os, const block* blk) {
     os << blk->unit << endl;
@@ -86,7 +86,7 @@ void use_block_x_to_produce_info_in_y(block* x, block* y) {
 void* thread1(void* ptr) {
     block* b;
     while (1) {
-        sem_wait(&counting_freelist);
+        sem_wait(&counting_freelist2);
         sem_wait(&binary_freelist);
 
         b = unlink(0);
@@ -114,6 +114,7 @@ void* thread2(void* ptr) {
         x = unlink(1);
 
         sem_post(&binary_list1);
+
         sem_wait(&counting_freelist);
         sem_wait(&binary_freelist);
 
@@ -129,6 +130,7 @@ void* thread2(void* ptr) {
 
         sem_post(&binary_freelist);
         sem_post(&counting_freelist);
+        
         sem_wait(&binary_list2);
 
         link(y, 2);
@@ -157,6 +159,7 @@ void* thread3(void* ptr) {
 
          sem_post(&binary_freelist);
          sem_post(&counting_freelist);
+         sem_post(&counting_freelist2);
      }
   
 }
@@ -176,6 +179,8 @@ int main(int argc, char** argv) {
 
     sem_init(&binary_freelist, 0, 1);
     sem_init(&counting_freelist, 0, N);
+    sem_init(&counting_freelist2, 0, N-1);
+
     
     sem_init(&binary_list1, 0, 1);
     sem_init(&counting_list1, 0, 0);
