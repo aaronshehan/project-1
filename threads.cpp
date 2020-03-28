@@ -20,7 +20,7 @@ list<block*> freelist;
 list<block*> list1;
 list<block*> list2;
 
-sem_t binary_freelist, counting_freelist, binary_list1, counting_list1, binary_list2, couting_list2;
+sem_t binary_freelist, counting_freelist, binary_list1, counting_list1, binary_list2, counting_list2;
 
 std::ostream& operator<<(std::ostream& os, const block* blk) {
     os << blk->unit << endl;
@@ -121,6 +121,16 @@ int main(int argc, char** argv) {
     for (int i = 0; i < N; i++) {
         freelist.push_back(new block(0));
     }
+
+    sem_init(&binary_freelist, 0, 1);
+    sem_init(&counting_freelist, 0, N);
+    
+    sem_init(&binary_list1, 0, 1);
+    sem_init(&counting_list1, 0, 0);
+
+    sem_init(&binary_list2, 0, 1);
+    sem_init(&counting_list2, 0, 0);
+
 
     pthread_t threads[3];
 
